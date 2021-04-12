@@ -9,6 +9,9 @@ use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
 use app\models\ContactForm;
+use GuzzleHttp\Client;
+use yii\helpers\BaseJson;
+use app\models\Cat;
 
 class SiteController extends Controller
 {
@@ -61,7 +64,39 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        return $this->render('index');
+        $client = new Client();
+        $response = $client->request('GET', 'https://api.thecatapi.com/v1/breeds', [
+            // 'query' => ['limit' => 5]
+        ]);
+
+        // echo $response->getStatusCode(); // 200
+        // echo $response->getHeaderLine('content-type'); // 'application/json; charset=utf8'
+        // echo $response->getBody(); // '{"id": 1420053, "name": "guzzle", ...}'
+
+        $json = new BaseJson();
+        $result = $json->decode($response->getBody());
+
+        // shuffle array
+        shuffle($result);
+
+        // get 5 first elements
+        $result = array_slice($result, 0, 5);
+
+        // convert to Cat model
+        $arr = array();
+        $model = new Cat();
+        for($i = 0; $i < count($result); $i++){
+            $response = $client->request('GET', 'https://api.thecatapi.com/v1/images/search', [
+                'query' => [
+                    'breed_id' => $result[$i]['id'],
+                    'size' => 'small'
+                ]
+            ]);
+            $cat_result = $json->decode($response->getBody());
+            array_push($arr, $cat_result[0]);
+        }
+        
+        return $this->render('index.twig', ['cats' => $arr]);
     }
 
     /**
@@ -123,6 +158,6 @@ class SiteController extends Controller
      */
     public function actionAbout()
     {
-        return $this->render('about');
+        return $this->render('about.twig');
     }
 }

@@ -1,9 +1,5 @@
-<?php
+{{ set(this, 'title', 'CatBasic') }}
 
-/* @var $this yii\web\View */
-
-$this->title = 'My Yii Application';
-?>
 <div class="site-index">
 
     <div class="jumbotron">
@@ -13,6 +9,17 @@ $this->title = 'My Yii Application';
 
         <p><a class="btn btn-lg btn-success" href="http://www.yiiframework.com">Get started with Yii</a></p>
     </div>
+
+    {% for cat in cats %}
+        <div class="card" style="width: 18rem;">
+            <img class="card-img-top" src="{{ cat.url }}" alt="Card image cap">
+            <div class="card-body">
+                <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+            </div>
+        </div>
+    {% else %}
+        No cats have been found.
+    {% endfor %}
 
     <div class="body-content">
 
