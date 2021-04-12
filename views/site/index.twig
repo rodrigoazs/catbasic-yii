@@ -7,14 +7,16 @@
             <div class="card">
                 <div class="card_image"><img src="{{ cat.url }}"></div>
                 <div class="card_content">
-                <h2 class="card_title">Card Grid Layout</h2>
-                <p class="card_text">Demo of pixel perfect pure CSS simple responsive card grid layout</p>
-                <button class="btn card_btn">Read More</button>
+                <h2 class="card_title">{{ cat.breeds[0].name }}</h2>
+                <p class="card_text">{{ cat.breeds[0].description }}</p>
+                <a href="{{ url(['detail'], {'breed_id' : cat.breeds[0].id }) }}">
+                  <button class="btn card_btn">Read More</button>
+                </a>
                 </div>
             </div>
         </li>
     {% else %}
-        No cats have been found.
+        No cats have been found.  
     {% endfor %}
   </ul>
 </div>

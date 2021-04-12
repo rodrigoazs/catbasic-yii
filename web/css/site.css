@@ -94,7 +94,6 @@ img {
 
 .card_title {
   color: #000;
-  font-size: 1.1rem;
   font-weight: 700;
   letter-spacing: 1px;
   text-transform: capitalize;
@@ -103,7 +102,7 @@ img {
 
 .card_text {
   color: #000;
-  font-size: 0.875rem;
+  font-size: 12px;
   line-height: 1.5;
   margin-bottom: 1.25rem;    
   font-weight: 400;
