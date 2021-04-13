@@ -85,7 +85,7 @@ class SiteController extends Controller
         // convert to Cat model
         $arr = array();
         $model = new Cat();
-        for($i = 0; $i < count($result); $i++){
+        for ($i = 0; $i < count($result); $i++) {
             $response = $client->request('GET', 'https://api.thecatapi.com/v1/images/search', [
                 'query' => [
                     'breed_id' => $result[$i]['id'],
@@ -97,6 +97,58 @@ class SiteController extends Controller
         }
         
         return $this->render('index.twig', ['cats' => $arr]);
+    }
+
+    public function actionSearch($breed)
+    {
+        $client = new Client();
+        $response = $client->request('GET', 'https://api.thecatapi.com/v1/breeds/search', [
+            'query' => ['q' => $breed]
+        ]);
+
+        $json = new BaseJson();
+        $result = $json->decode($response->getBody());
+
+        // convert to Cat model
+        $arr = array();
+        $model = new Cat();
+        for ($i = 0; $i < count($result); $i++) {
+            $response = $client->request('GET', 'https://api.thecatapi.com/v1/images/search', [
+                'query' => [
+                    'breed_id' => $result[$i]['id'],
+                    'size' => 'small'
+                ]
+            ]);
+            // check if there is image
+            $cat_result = $json->decode($response->getBody());
+            if (count($cat_result) > 0) {
+                array_push($arr, $cat_result[0]);
+            }
+        }
+        
+        return $this->render('search.twig', ['cats' => $arr]);
+    }
+
+    public function actionDetail($breed_id)
+    {
+        $client = new Client();
+        $response = $client->request('GET', 'https://api.thecatapi.com/v1/images/search', [
+            'query' => [
+                'breed_id' => $breed_id,
+                'size' => 'small'
+            ]
+        ]);
+
+        $json = new BaseJson();
+        $result = $json->decode($response->getBody());
+
+        if (count($result) > 0) {
+            $result = $result[0];
+        } else {
+            $result = null;
+        }
+        
+        return $this->render('detail.twig', ['cat' => $result]);
     }
 
     /**
@@ -131,24 +183,6 @@ class SiteController extends Controller
         Yii::$app->user->logout();
 
         return $this->goHome();
-    }
-
-    /**
-     * Displays contact page.
-     *
-     * @return Response|string
-     */
-    public function actionContact()
-    {
-        $model = new ContactForm();
-        if ($model->load(Yii::$app->request->post()) && $model->contact(Yii::$app->params['adminEmail'])) {
-            Yii::$app->session->setFlash('contactFormSubmitted');
-
-            return $this->refresh();
-        }
-        return $this->render('contact', [
-            'model' => $model,
-        ]);
     }
 
     /**

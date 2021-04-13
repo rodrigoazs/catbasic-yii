@@ -79,6 +79,10 @@ img {
     }
   }
 
+.detail {
+  padding: 10px;
+}
+
 .card {
   background-color: white;
   border-radius: 0.25rem;

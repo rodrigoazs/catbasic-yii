@@ -1,0 +1,50 @@
+{{ set(this, 'title', 'CatBasic') }}
+
+<div class="main">
+  <ul class="cards">
+    {% if cat %}
+        <li class="cards_item">
+            <div class="card">
+                <div class="card_image"><img src="{{ cat.url }}"></div>
+                <div class="card_content">
+                <h2 class="card_title">{{ cat.breeds[0].name }}</h2>
+                <p class="card_text">{{ cat.breeds[0].description }}</p>
+                </div>
+            </div>
+        </li>
+        <li class="cards_item">
+          <div class="card">
+            <div class="detail">
+              <ul>
+                <li>Temperament: {{ cat.breeds[0].temperament }}</li>
+                <li>Affection Level: {{ cat.breeds[0].affection_level }}</li>
+                <li>Child Friendly: {{ cat.breeds[0].child_friendly }}</li>
+                <li>Stranger Friendly: {{ cat.breeds[0].stranger_friendly }}</li>
+                <li>Dog Friendly: {{ cat.breeds[0].dog_friendly }}</li>
+                <li>Energy Level: {{ cat.breeds[0].energy_level }}</li>
+                <li>Experimental: {{ cat.breeds[0].experimental }}</li>
+                <li>Grooming: {{ cat.breeds[0].grooming }}</li>
+                <li>Hairless: {{ cat.breeds[0].hairless }}</li>
+                <li>Health Issues: {{ cat.breeds[0].health_issues }}</li>
+                <li>Hypoallergenic: {{ cat.breeds[0].hypoallergenic }}</li>
+                <li>Indoor: {{ cat.breeds[0].indoor }}</li>
+                <li>Intelligence: {{ cat.breeds[0].intelligence }}</li>
+                <li>Lap: {{ cat.breeds[0].lap }}</li>
+                <li>Natural: {{ cat.breeds[0].natural }}</li>
+                <li>Rare: {{ cat.breeds[0].rare }}</li>
+                <li>Rex: {{ cat.breeds[0].rex }}</li>
+                <li>Shedding Level: {{ cat.breeds[0].shedding_level }}</li>
+                <li>Short Legs: {{ cat.breeds[0].short_legs }}</li>
+                <li>Social Needs: {{ cat.breeds[0].social_needs }} </li>
+                <li>Suppressed Tail: {{ cat.breeds[0].suppressed_tail }}</li>
+                <li>Vocalisation: {{ cat.breeds[0].vocalisation }}</li>
+                <li>Life Span: {{ cat.breeds[0].life_span }}</li>
+              </ul>
+            </div>
+          </div>
+        </li>
+    {% else %}
+        This cat could have not been found.
+    {% endif %}
+  </ul>
+</div>
