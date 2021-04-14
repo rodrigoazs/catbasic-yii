@@ -83,6 +83,10 @@ img {
   padding: 10px;
 }
 
+.searchform {
+  padding-top: 50px;
+}
+
 .card {
   background-color: white;
   border-radius: 0.25rem;

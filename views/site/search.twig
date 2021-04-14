@@ -1,6 +1,16 @@
 {{ set(this, 'title', 'CatBasic') }}
 
 <div class="main">
+  <div class="searchform">
+    <form action="index.php?r=site%2Fsearch" method="GET">
+      <div class="form-group">
+        <label for="search">Search</label>
+        <input type="hidden" name="r" value="site/search">
+        <input class="form-control" id="search" name="breed" placeholder="Search a breed">
+      </div>
+      <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+  </div>
   <ul class="cards">
       {% for cat in cats %}
         <li class="cards_item">
