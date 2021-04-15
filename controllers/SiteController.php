@@ -69,10 +69,6 @@ class SiteController extends Controller
             // 'query' => ['limit' => 5]
         ]);
 
-        // echo $response->getStatusCode(); // 200
-        // echo $response->getHeaderLine('content-type'); // 'application/json; charset=utf8'
-        // echo $response->getBody(); // '{"id": 1420053, "name": "guzzle", ...}'
-
         $json = new BaseJson();
         $result = $json->decode($response->getBody());
 
@@ -126,7 +122,7 @@ class SiteController extends Controller
             }
         }
         
-        return $this->render('search.twig', ['cats' => $arr]);
+        return $this->render('index.twig', ['cats' => $arr]);
     }
 
     public function actionDetail($breed_id)
