@@ -70,7 +70,7 @@ class SiteController extends Controller
         // $data = $cache->getOrSet('index_cats', function () {
         $exists = $cache->exists($key);
         $test = $cache->get($key);
-        if ($cache->exists($key) === false) {
+        if ($cache->exists($key) == false) {
             $client = new Client();
             $response = $client->request('GET', 'https://api.thecatapi.com/v1/breeds', [
                 // 'query' => ['limit' => 5]
@@ -98,6 +98,7 @@ class SiteController extends Controller
                 $cat_result = $json->decode($response->getBody());
                 array_push($arr, $cat_result[0]);
             }
+            echo "SOLVED";
             // return $arr;
             $cache->set($key, $arr);
             $data = $arr;
