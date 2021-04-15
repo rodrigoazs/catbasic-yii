@@ -18,7 +18,14 @@ $config = [
             'cookieValidationKey' => 'HY147OBzFmXGj8l2VST234dWSDDX9YMf',
         ],
         'cache' => [
-            'class' => 'yii\caching\FileCache',
+            'class' => 'yii\redis\Cache',
+        ],
+        'redis' => [
+            'class' => 'yii\redis\Connection',
+            'hostname' => parse_url($_ENV['REDISCLOUD_URL'], PHP_URL_HOST),
+            'port' => parse_url($_ENV['REDISCLOUD_URL'], PHP_URL_PORT),
+            'password' => parse_url($_ENV['REDISCLOUD_URL'], PHP_URL_PASS),
+            'database' => 0,
         ],
         'user' => [
             'identityClass' => 'app\models\User',
