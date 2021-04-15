@@ -15,7 +15,7 @@ $config = [
     ],
     'components' => [
         'cache' => [
-            'class' => 'yii\caching\FileCache',
+            'class' => 'yii\redis\Cache',
         ],
         'redis' => [
             'class' => 'yii\redis\Connection',
