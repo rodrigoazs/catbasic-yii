@@ -64,61 +64,77 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        $client = new Client();
-        $response = $client->request('GET', 'https://api.thecatapi.com/v1/breeds', [
-            // 'query' => ['limit' => 5]
-        ]);
-
-        $json = new BaseJson();
-        $result = $json->decode($response->getBody());
-
-        // shuffle array
-        shuffle($result);
-
-        // get 5 first elements
-        $result = array_slice($result, 0, 5);
-
-        // convert to Cat model
-        $arr = array();
-        $model = new Cat();
-        for ($i = 0; $i < count($result); $i++) {
-            $response = $client->request('GET', 'https://api.thecatapi.com/v1/images/search', [
-                'query' => [
-                    'breed_id' => $result[$i]['id'],
-                    'size' => 'small'
-                ]
+        $cache = Yii::$app->getCache();
+        $data = $cache->getOrSet('index_cats', function () {
+            $client = new Client();
+            $response = $client->request('GET', 'https://api.thecatapi.com/v1/breeds', [
+                // 'query' => ['limit' => 5]
             ]);
-            $cat_result = $json->decode($response->getBody());
-            array_push($arr, $cat_result[0]);
-        }
+
+            $json = new BaseJson();
+            $result = $json->decode($response->getBody());
+
+            // shuffle array
+            shuffle($result);
+
+            // get 5 first elements
+            $result = array_slice($result, 0, 5);
+
+            // convert to Cat model
+            $arr = array();
+            $model = new Cat();
+            for ($i = 0; $i < count($result); $i++) {
+                $response = $client->request('GET', 'https://api.thecatapi.com/v1/images/search', [
+                    'query' => [
+                        'breed_id' => $result[$i]['id'],
+                        'size' => 'small'
+                    ]
+                ]);
+                $cat_result = $json->decode($response->getBody());
+                array_push($arr, $cat_result[0]);
+            }
+            return $arr;
+        });
         
-        return $this->render('index.twig', ['cats' => $arr]);
+        return $this->render('index.twig', ['cats' => $data]);
     }
 
     public function actionSearch($breed)
     {
-        $client = new Client();
-        $response = $client->request('GET', 'https://api.thecatapi.com/v1/breeds/search', [
-            'query' => ['q' => $breed]
-        ]);
-
-        $json = new BaseJson();
-        $result = $json->decode($response->getBody());
-
-        // convert to Cat model
-        $arr = array();
-        $model = new Cat();
-        for ($i = 0; $i < count($result); $i++) {
-            $response = $client->request('GET', 'https://api.thecatapi.com/v1/images/search', [
-                'query' => [
-                    'breed_id' => $result[$i]['id'],
-                    'size' => 'small'
-                ]
+        $cache = Yii::$app->getCache();
+        $result = $cache->getOrSet('search_breed_'.$breed, function () use ($breed) {
+            $client = new Client();
+            $response = $client->request('GET', 'https://api.thecatapi.com/v1/breeds/search', [
+                'query' => ['q' => $breed]
             ]);
+    
+            $json = new BaseJson();
+            $result = $json->decode($response->getBody());
+
+            return $result;
+        });
+
+        // get image for each breed
+        $arr = array();
+        for ($i = 0; $i < count($result); $i++) {
+            $breed = $result[$i]['id'];
+            $data = $cache->getOrSet('search_'.$breed, function () use ($breed) {
+                $client = new Client();
+                $response = $client->request('GET', 'https://api.thecatapi.com/v1/images/search', [
+                    'query' => [
+                        'breed_id' => $breed,
+                        'size' => 'small'
+                    ]
+                ]);
+                $json = new BaseJson();
+                $cat_result = $json->decode($response->getBody());
+
+                return $cat_result;
+            });
+
             // check if there is image
-            $cat_result = $json->decode($response->getBody());
-            if (count($cat_result) > 0) {
-                array_push($arr, $cat_result[0]);
+            if (count($data) > 0) {
+                array_push($arr, $data[0]);
             }
         }
         
@@ -127,24 +143,29 @@ class SiteController extends Controller
 
     public function actionDetail($breed_id)
     {
-        $client = new Client();
-        $response = $client->request('GET', 'https://api.thecatapi.com/v1/images/search', [
-            'query' => [
-                'breed_id' => $breed_id,
-                'size' => 'small'
-            ]
-        ]);
+        $cache = Yii::$app->getCache();
+        $data = $cache->getOrSet('detail_'.$breed_id, function () use ($breed_id) {
+            $client = new Client();
+            $response = $client->request('GET', 'https://api.thecatapi.com/v1/images/search', [
+                'query' => [
+                    'breed_id' => $breed_id,
+                    'size' => 'small'
+                ]
+            ]);
 
-        $json = new BaseJson();
-        $result = $json->decode($response->getBody());
+            $json = new BaseJson();
+            $result = $json->decode($response->getBody());
 
-        if (count($result) > 0) {
-            $result = $result[0];
-        } else {
-            $result = null;
-        }
-        
-        return $this->render('detail.twig', ['cat' => $result]);
+            if (count($result) > 0) {
+                $result = $result[0];
+            } else {
+                $result = null;
+            }
+            
+            return $result;
+        });
+
+        return $this->render('detail.twig', ['cat' => $data]);
     }
 
     /**
