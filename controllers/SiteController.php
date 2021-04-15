@@ -64,8 +64,12 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        $cache = Yii::$app->getCache();
-        $data = $cache->getOrSet('index_cats', function () {
+        // $cache = Yii::$app->getCache();
+        $cache = Yii::$app->redis;
+        $key = 'index_cats';
+        // $data = $cache->getOrSet('index_cats', function () {
+        $data = $cache->get($key);
+        if ($data === false) {
             $client = new Client();
             $response = $client->request('GET', 'https://api.thecatapi.com/v1/breeds', [
                 // 'query' => ['limit' => 5]
@@ -93,8 +97,11 @@ class SiteController extends Controller
                 $cat_result = $json->decode($response->getBody());
                 array_push($arr, $cat_result[0]);
             }
-            return $arr;
-        });
+            // return $arr;
+            $cache->set($key, $arr);
+            $data = $arr;
+        }
+        // });
         
         return $this->render('index.twig', ['cats' => $data]);
     }
