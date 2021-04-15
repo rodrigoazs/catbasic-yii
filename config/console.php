@@ -22,7 +22,7 @@ $config = [
             'hostname' => parse_url($_ENV['REDISCLOUD_URL'], PHP_URL_HOST),
             'port' => parse_url($_ENV['REDISCLOUD_URL'], PHP_URL_PORT),
             'password' => parse_url($_ENV['REDISCLOUD_URL'], PHP_URL_PASS),
-            'database' => 0,
+            'database' => 'redis-catbasic-10325262',
         ],
         'log' => [
             'targets' => [
