@@ -68,6 +68,8 @@ class SiteController extends Controller
         $cache = Yii::$app->redis;
         $key = 'index_cats';
         // $data = $cache->getOrSet('index_cats', function () {
+        $exists = $cache->exists($key);
+        $test = $cache->get($key);
         if ($cache->exists($key) === false) {
             $client = new Client();
             $response = $client->request('GET', 'https://api.thecatapi.com/v1/breeds', [
@@ -104,7 +106,7 @@ class SiteController extends Controller
         }
         // });
         
-        return $this->render('index.twig', ['cats' => $data]);
+        return $this->render('index.twig', ['cats' => $data, 'exists' => $exists, 'test' => $test]);
     }
 
     public function actionSearch($breed)
