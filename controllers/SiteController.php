@@ -64,19 +64,15 @@ class SiteController extends Controller
      */
     public function actionIndex()
     {
-        // $cache = Yii::$app->getCache();
+        $json = new BaseJson();
         $cache = Yii::$app->redis;
         $key = 'index_cats';
-        // $data = $cache->getOrSet('index_cats', function () {
-        $exists = $cache->exists($key);
-        $test = $cache->get($key);
         if ($cache->exists($key) == false) {
             $client = new Client();
             $response = $client->request('GET', 'https://api.thecatapi.com/v1/breeds', [
                 // 'query' => ['limit' => 5]
             ]);
 
-            $json = new BaseJson();
             $result = $json->decode($response->getBody());
 
             // shuffle array
@@ -98,16 +94,13 @@ class SiteController extends Controller
                 $cat_result = $json->decode($response->getBody());
                 array_push($arr, $cat_result[0]);
             }
-            echo "SOLVED";
-            // return $arr;
-            $cache->set($key, $arr);
+            $cache->set($key, $json->encode($arr));
             $data = $arr;
         } else {
-            $data = $cache->get($key);
+            $data = $json->decode($cache->get($key));
         }
-        // });
         
-        return $this->render('index.twig', ['cats' => $data, 'exists' => $exists, 'test' => $test]);
+        return $this->render('index.twig', ['cats' => $data]);
     }
 
     public function actionSearch($breed)
