@@ -105,8 +105,10 @@ class SiteController extends Controller
 
     public function actionSearch($breed)
     {
-        $cache = Yii::$app->getCache();
-        $result = $cache->getOrSet('search_breed_'.$breed, function () use ($breed) {
+        $json = new BaseJson();
+        $cache = Yii::$app->redis;
+        $key = 'search_breed_'.$breed;
+        if ($cache->exists($key) == false) {
             $client = new Client();
             $response = $client->request('GET', 'https://api.thecatapi.com/v1/breeds/search', [
                 'query' => ['q' => $breed]
@@ -114,15 +116,17 @@ class SiteController extends Controller
     
             $json = new BaseJson();
             $result = $json->decode($response->getBody());
-
-            return $result;
-        });
+            $cache->set($key, $json->encode($result));
+        } else {
+            $result = $json->decode($cache->get($key));
+        }
 
         // get image for each breed
         $arr = array();
         for ($i = 0; $i < count($result); $i++) {
             $breed = $result[$i]['id'];
-            $data = $cache->getOrSet('search_'.$breed, function () use ($breed) {
+            $key = 'search_'.$breed;
+            if ($cache->exists($key) == false) {
                 $client = new Client();
                 $response = $client->request('GET', 'https://api.thecatapi.com/v1/images/search', [
                     'query' => [
@@ -130,11 +134,12 @@ class SiteController extends Controller
                         'size' => 'small'
                     ]
                 ]);
-                $json = new BaseJson();
                 $cat_result = $json->decode($response->getBody());
-
-                return $cat_result;
-            });
+                $cache->set($key, $json->encode($cat_result));
+                $data = $cat_result;
+            } else {
+                $data = $json->decode($cache->get($key));
+            }
 
             // check if there is image
             if (count($data) > 0) {
@@ -147,8 +152,10 @@ class SiteController extends Controller
 
     public function actionDetail($breed_id)
     {
-        $cache = Yii::$app->getCache();
-        $data = $cache->getOrSet('detail_'.$breed_id, function () use ($breed_id) {
+        $json = new BaseJson();
+        $cache = Yii::$app->redis;
+        $key = 'detail_'.$breed_id;
+        if ($cache->exists($key) == false) {
             $client = new Client();
             $response = $client->request('GET', 'https://api.thecatapi.com/v1/images/search', [
                 'query' => [
@@ -161,13 +168,14 @@ class SiteController extends Controller
             $result = $json->decode($response->getBody());
 
             if (count($result) > 0) {
-                $result = $result[0];
+                $cache->set($key, $json->encode($result[0]));
+                $data = $result[0];
             } else {
-                $result = null;
+                $data = null;
             }
-            
-            return $result;
-        });
+        } else {
+            $data = $json->decode($cache->get($key));
+        }
 
         return $this->render('detail.twig', ['cat' => $data]);
     }
