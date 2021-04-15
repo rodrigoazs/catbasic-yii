@@ -68,8 +68,7 @@ class SiteController extends Controller
         $cache = Yii::$app->redis;
         $key = 'index_cats';
         // $data = $cache->getOrSet('index_cats', function () {
-        $data = $cache->get($key);
-        if ($data === false) {
+        if ($cache->exists($key) === false) {
             $client = new Client();
             $response = $client->request('GET', 'https://api.thecatapi.com/v1/breeds', [
                 // 'query' => ['limit' => 5]
@@ -100,6 +99,8 @@ class SiteController extends Controller
             // return $arr;
             $cache->set($key, $arr);
             $data = $arr;
+        } else {
+            $data = $cache->get($key);
         }
         // });
         
