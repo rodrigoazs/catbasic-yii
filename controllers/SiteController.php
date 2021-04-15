@@ -175,11 +175,6 @@ class SiteController extends Controller
      */
     public function actionAbout()
     {
-        $teste = array(
-            parse_url($_ENV['REDISCLOUD_URL'], PHP_URL_HOST),
-            parse_url($_ENV['REDISCLOUD_URL'], PHP_URL_PORT),
-            parse_url($_ENV['REDISCLOUD_URL'], PHP_URL_PASS)
-        );
-        return $this->render('about.twig', ['teste' => $teste]);
+        return $this->render('about.twig');
     }
 }
