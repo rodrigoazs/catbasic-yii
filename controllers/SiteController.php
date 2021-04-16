@@ -81,13 +81,56 @@ class SiteController extends Controller
             // get 5 first elements
             $result = array_slice($result, 0, 5);
 
-            // convert to Cat model
+            // get new cat images
             $arr = array();
             $model = new Cat();
             for ($i = 0; $i < count($result); $i++) {
                 $response = $client->request('GET', 'https://api.thecatapi.com/v1/images/search', [
                     'query' => [
                         'breed_id' => $result[$i]['id'],
+                        'size' => 'small'
+                    ]
+                ]);
+                $cat_result = $json->decode($response->getBody());
+                array_push($arr, $cat_result[0]);
+            }
+            $cache->set($key, $json->encode($arr));
+            $data = $arr;
+        } else {
+            $data = $json->decode($cache->get($key));
+        }
+        
+        return $this->render('index.twig', ['cats' => $data]);
+    }
+
+    public function actionAlphabetic($letter)
+    {
+        $json = new BaseJson();
+        $cache = Yii::$app->redis;
+        $key = 'alphabetic_'.$letter;
+        if ($cache->exists($key) == false) {
+            $client = new Client();
+            $response = $client->request('GET', 'https://api.thecatapi.com/v1/breeds', [
+                // 'query' => ['limit' => 5]
+            ]);
+
+            $result = $json->decode($response->getBody());
+
+            // get cat names only starting with letter
+            $data = array();
+            for ($i = 0; $i < count($result); $i++) {
+                if ($result[$i]['name'][0] == $letter) {
+                    array_push($data, $result[$i]);
+                }
+            }
+
+            // get new cat images
+            $arr = array();
+            $model = new Cat();
+            for ($i = 0; $i < count($data); $i++) {
+                $response = $client->request('GET', 'https://api.thecatapi.com/v1/images/search', [
+                    'query' => [
+                        'breed_id' => $data[$i]['id'],
                         'size' => 'small'
                     ]
                 ]);

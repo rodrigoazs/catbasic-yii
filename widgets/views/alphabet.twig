@@ -1,0 +1,7 @@
+<ul class="navbar-nav navbar-left nav small-letter">
+    {% for letter in letters %}
+        <li>
+            <a href="{{ url(['alphabetic'], {'letter': letter }) }}">{{ letter }}</a>
+        </li>
+    {% endfor %}
+</ul>
