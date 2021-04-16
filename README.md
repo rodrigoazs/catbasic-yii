@@ -11,10 +11,11 @@ This project is a implementation of a web application that consults the Cat API 
 This implementations contains 4 pages described as follows:
 
 ##### Landing page
-The landing page displays cards with the name, image and a small description of 5 breeds picked randomly. This is done by using the Guzzle for HTTP requests. The landing page action make a request to the CatAPI requiring a list of the cat breeds. The list of cat breeds are shuffled and the elements from 0 to 4 are collected in order to present 5 random breeds. Then, a new HTTP request is done to get new public images for each cat breed. The data obtained from this process is cached through Redis.
+The landing page displays cards with the name, image and a small description of 5 breeds picked randomly. This is done by using the Guzzle for HTTP requests. The landing page action make a request to the CatAPI requiring a list of the cat breeds. The list of cat breeds are shuffled and the elements from 0 to 4 are collected in order to present 5 random breeds. Then, new HTTP requests are done to get new public images for each cat breed. The data obtained from this process is cached through Redis. The results are presented by rendering the index.twig.
 
 ##### Search Page
-    test
+Search results page displays results in cards using the same view of the landing page. Through a GET request it collects the results of the desired cat breed searched. In order to colect this data, a HTTP request is done to CatAPI to a route that searchs breeds by name. The response returns all breeds names that contains the query value. This response is cached through Redis and then images for each breed are collected through a HTTP request, the same way is done in the landing page. This data is also cached. 
+
 ##### Detailed Page
 ##### Alphabetic display page
 
