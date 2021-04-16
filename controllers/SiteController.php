@@ -69,9 +69,13 @@ class SiteController extends Controller
         $key = 'index_cats';
         if ($cache->exists($key) == false) {
             $client = new Client();
-            $response = $client->request('GET', 'https://api.thecatapi.com/v1/breeds', [
-                // 'query' => ['limit' => 5]
-            ]);
+            try {
+                $response = $client->request('GET', 'https://api.thecatapi.com/v1/breeds', [
+                    // 'query' => ['limit' => 5]
+                ]);
+            } catch(\Exception $e) {
+                return $this->render('error', ['name' => 'Bad request', 'message' => 'There was an error requesting the data.']);
+            }
 
             $result = $json->decode($response->getBody());
 
@@ -85,12 +89,16 @@ class SiteController extends Controller
             $arr = array();
             $model = new Cat();
             for ($i = 0; $i < count($result); $i++) {
-                $response = $client->request('GET', 'https://api.thecatapi.com/v1/images/search', [
-                    'query' => [
-                        'breed_id' => $result[$i]['id'],
-                        'size' => 'small'
-                    ]
-                ]);
+                try {
+                    $response = $client->request('GET', 'https://api.thecatapi.com/v1/images/search', [
+                        'query' => [
+                            'breed_id' => $result[$i]['id'],
+                            'size' => 'small'
+                        ]
+                    ]);
+                } catch(\Exception $e) {
+                    return $this->render('error', ['name' => 'Bad request', 'message' => 'There was an error requesting the data.']);
+                }
                 $cat_result = $json->decode($response->getBody());
                 array_push($arr, $cat_result[0]);
             }
@@ -110,9 +118,13 @@ class SiteController extends Controller
         $key = 'alphabetic_'.$letter;
         if ($cache->exists($key) == false) {
             $client = new Client();
-            $response = $client->request('GET', 'https://api.thecatapi.com/v1/breeds', [
-                // 'query' => ['limit' => 5]
-            ]);
+            try {
+                $response = $client->request('GET', 'https://api.thecatapi.com/v1/breeds', [
+                    // 'query' => ['limit' => 5]
+                ]);
+            } catch(\Exception $e) {
+                return $this->render('error', ['name' => 'Bad request', 'message' => 'There was an error requesting the data.']);
+            }
 
             $result = $json->decode($response->getBody());
 
@@ -128,12 +140,16 @@ class SiteController extends Controller
             $arr = array();
             $model = new Cat();
             for ($i = 0; $i < count($data); $i++) {
-                $response = $client->request('GET', 'https://api.thecatapi.com/v1/images/search', [
-                    'query' => [
-                        'breed_id' => $data[$i]['id'],
-                        'size' => 'small'
-                    ]
-                ]);
+                try {
+                    $response = $client->request('GET', 'https://api.thecatapi.com/v1/images/search', [
+                        'query' => [
+                            'breed_id' => $data[$i]['id'],
+                            'size' => 'small'
+                        ]
+                    ]);
+                } catch(\Exception $e) {
+                    return $this->render('error', ['name' => 'Bad request', 'message' => 'There was an error requesting the data.']);
+                }
                 $cat_result = $json->decode($response->getBody());
                 array_push($arr, $cat_result[0]);
             }
@@ -153,9 +169,13 @@ class SiteController extends Controller
         $key = 'search_breed_'.$breed;
         if ($cache->exists($key) == false) {
             $client = new Client();
-            $response = $client->request('GET', 'https://api.thecatapi.com/v1/breeds/search', [
-                'query' => ['q' => $breed]
-            ]);
+            try {
+                $response = $client->request('GET', 'https://api.thecatapi.com/v1/breeds/search', [
+                    'query' => ['q' => $breed]
+                ]);
+            } catch(\Exception $e) {
+                return $this->render('error', ['name' => 'Bad request', 'message' => 'There was an error requesting the data.']);
+            }
     
             $json = new BaseJson();
             $result = $json->decode($response->getBody());
@@ -171,12 +191,16 @@ class SiteController extends Controller
             $key = 'search_'.$breed;
             if ($cache->exists($key) == false) {
                 $client = new Client();
-                $response = $client->request('GET', 'https://api.thecatapi.com/v1/images/search', [
-                    'query' => [
-                        'breed_id' => $breed,
-                        'size' => 'small'
-                    ]
-                ]);
+                try {
+                    $response = $client->request('GET', 'https://api.thecatapi.com/v1/images/search', [
+                        'query' => [
+                            'breed_id' => $breed,
+                            'size' => 'small'
+                        ]
+                    ]);
+                } catch(\Exception $e) {
+                    return $this->render('error', ['name' => 'Bad request', 'message' => 'There was an error requesting the data.']);
+                }
                 $cat_result = $json->decode($response->getBody());
                 $cache->set($key, $json->encode($cat_result));
                 $data = $cat_result;
@@ -200,12 +224,16 @@ class SiteController extends Controller
         $key = 'detail_'.$breed_id;
         if ($cache->exists($key) == false) {
             $client = new Client();
-            $response = $client->request('GET', 'https://api.thecatapi.com/v1/images/search', [
-                'query' => [
-                    'breed_id' => $breed_id,
-                    'size' => 'small'
-                ]
-            ]);
+            try {
+                $response = $client->request('GET', 'https://api.thecatapi.com/v1/images/search', [
+                    'query' => [
+                        'breed_id' => $breed_id,
+                        'size' => 'small'
+                    ]
+                ]);
+            } catch(\Exception $e) {
+                return $this->render('error', ['name' => 'Bad request', 'message' => 'There was an error requesting the data.']);
+            }
 
             $json = new BaseJson();
             $result = $json->decode($response->getBody());
