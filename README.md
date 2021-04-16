@@ -6,7 +6,17 @@
     <br>
 </p>
 
-This project is a implementation of a web application that consult the Cat API and display information about several breeds. The implementation of the web application was done through the Yii framework.
+This project is a implementation of a web application that consults the Cat API and displays information about several breeds. The implementation of the web application was done through the Yii framework and was deployed to the Heroku Cloud Application Platform.
+
+This implementations contains 4 pages described as follows:
+
+##### Landing page
+The landing page displays cards with the name, image and a small description of 5 breeds picked randomly. This is done by using the Guzzle for HTTP requests. The landing page action make a request to the CatAPI requiring a list of the cat breeds. The list of cat breeds are shuffled and the elements from 0 to 4 are collected in order to present 5 random breeds. Then, a new HTTP request is done to get new public images for each cat breed. The data obtained from this process is cached through Redis.
+
+##### Search Page
+    test
+##### Detailed Page
+##### Alphabetic display page
 
 ### Install with Docker
 
