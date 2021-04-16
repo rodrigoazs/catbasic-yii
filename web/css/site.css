@@ -50,6 +50,10 @@ img {
   padding-top: 70px;
 }
 
+.small-letter > li > a {
+  padding: 15px 5px;
+}
+
 .card {
   background-color: white;
   border-radius: 0.25rem;
